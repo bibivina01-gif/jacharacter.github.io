@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>자캐 머리/눈 색상 조합표 (모바일 완벽 지원!)</title>
+    <title>자캐 머리/눈 색상 조합표 (최종 완벽판)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
@@ -57,15 +57,25 @@
         }
         .title-color-picker::-webkit-color-swatch { border: none; border-radius: 4px; }
 
-        /* 메인 레이아웃 */
-        .main-layout { display: flex; align-items: flex-start; gap: 30px; width: 100%; max-width: 1200px; justify-content: center; }
+        /* 메인 레이아웃 (팔레트를 완벽하게 중앙으로) */
+        .main-layout { 
+            position: relative; /* 메모장을 절대 위치로 띄우기 위한 기준점 */
+            display: flex; 
+            justify-content: center; /* 팔레트 중앙 정렬 */
+            width: 100%; 
+            max-width: 1400px; /* 폭을 넓혀서 메모장 공간 확보 */
+            margin: 0 auto;
+        }
 
-        /* 가이드 메모 */
+        /* 가이드 메모 (화면 왼쪽으로 완전히 밀착) */
         .guide-memo {
             width: 230px; background: #fff9c4; padding: 20px; border-radius: 2px;
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.05); position: sticky; top: 20px;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.05); 
+            position: absolute; /* 공중에 띄워서 팔레트 정렬에 영향 안 주게 함 */
+            left: 0; /* 왼쪽으로 완전히 밀기 */
+            top: 20px;
             transform: rotate(-1deg); border-bottom-right-radius: 30px; line-height: 1.6;
-            box-sizing: border-box; flex-shrink: 0;
+            box-sizing: border-box; z-index: 10;
         }
         .guide-memo h4 { margin: 0 0 10px 0; font-size: 18px; color: #f57f17; }
         .guide-memo ul { margin: 0; padding: 0; list-style: none; font-size: 13px; color: #5d4037; }
@@ -73,16 +83,13 @@
         .guide-memo li::before { content: "•"; position: absolute; left: 0; color: #fbc02d; }
         .guide-memo .highlight { font-weight: bold; color: #d84315; }
 
-        /* 모바일 스와이프 안내 문구 (PC에선 숨김) */
+        /* 모바일 스와이프 안내 문구 */
         .scroll-hint { display: none; color: #4a90e2; font-weight: bold; font-size: 14px; margin-bottom: 10px; animation: pulse 1.5s infinite; text-align: center; }
         @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
 
-        /* 표를 감싸는 스크롤 영역 (모바일용) */
+        /* 표를 감싸는 스크롤 영역 */
         .export-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch; /* 아이폰 부드러운 스크롤 */
-            padding-bottom: 15px;
+            width: auto; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 15px;
         }
 
         /* 캡처되는 실제 영역 */
@@ -90,7 +97,7 @@
             background: #ffffff; padding: 40px; border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08); display: flex;
             flex-direction: column; align-items: center; border: 1px solid #eaeaea;
-            min-width: max-content; /* 표가 찌그러지지 않게 내용물 크기 유지 */
+            min-width: max-content; 
         }
 
         .title-container { margin-bottom: 25px; width: 100%; text-align: center; }
@@ -121,7 +128,6 @@
             font-size: 10px; font-weight: bold; display: none;
             align-items: center; justify-content: center; cursor: pointer; z-index: 20;
         }
-        /* 모바일에선 터치 편의를 위해 항상 보이게 하거나 hover 대신 유지 */
         th:hover .delete-btn { display: flex; }
 
         .corner-cell {
@@ -138,8 +144,9 @@
             position: relative; overflow: hidden; border-radius: inherit;
         }
         .image-cell:hover { background-color: #f1f3f5; }
-        .image-cell::after { content: "+"; font-size: 28px; color: #adb5bd; }
-        .image-cell.has-image::after { display: none; }
+        
+        /* 🚨 플러스(+) 기호를 띄우는 CSS를 완전히 삭제했습니다. (깨끗한 빈칸 유지) */
+        
         .image-cell img { width: 100%; height: 100%; object-fit: cover; display: none; border-radius: inherit; }
         .image-cell.has-image img { display: block; }
 
@@ -183,28 +190,23 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: background 0.3s;
         }
 
-        /* 📱 모바일 반응형 처리 (화면 폭 768px 이하일 때 적용) */
+        /* 📱 화면 폭이 좁아져서 겹칠 것 같으면 메모장을 표 위로 올림 */
+        @media (max-width: 1100px) {
+            .main-layout { flex-direction: column; align-items: center; }
+            .guide-memo { 
+                position: relative; left: auto; top: auto; transform: none; 
+                margin-bottom: 20px; width: 100%; max-width: 400px; border-radius: 10px; 
+            }
+        }
+
+        /* 📱 모바일 완전 작은 화면 */
         @media (max-width: 768px) {
             body { padding: 20px 10px; }
-            .main-layout { flex-direction: column; align-items: center; gap: 15px; }
-            
-            /* 가이드 메모를 표 위로 올리고 똑바로 세움 */
-            .guide-memo { 
-                width: 100%; max-width: 400px; transform: none; 
-                position: relative; top: 0; margin-bottom: 10px;
-                border-radius: 10px;
-            }
-            
-            /* 스마트폰 스와이프 안내 문구 보이기 */
             .scroll-hint { display: block; }
-            
-            /* 모바일에선 캡처 영역 패딩을 줄이고 표 크기를 살짝 축소 */
             .export-container { padding: 20px 15px; }
             .title-input { font-size: 24px; min-width: 250px; }
             th, td { width: 65px; height: 65px; }
-            .image-cell::after { font-size: 20px; }
             
-            /* 모바일에선 터치로 지울 수 있도록 삭제 버튼 상시 노출 처리 (투명도 조절) */
             .delete-btn { display: flex; opacity: 0.8; }
             .image-cell.has-image .delete-img-btn { display: flex; opacity: 0.8; }
         }
